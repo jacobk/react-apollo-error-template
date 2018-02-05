@@ -1,5 +1,6 @@
 import { graphql, print } from "graphql";
 import { ApolloLink, Observable } from "apollo-link";
+
 import { schema } from "./schema";
 
 export const link = new ApolloLink(operation => {
@@ -10,8 +11,10 @@ export const link = new ApolloLink(operation => {
         graphql(schema, print(query), null, null, variables, operationName)
       )
       .then(result => {
-        observer.next(result);
-        observer.complete();
+        console.log('triggering error');
+        observer.error(new Error('error'));
+        // observer.next(result);
+        // observer.complete();
       })
       .catch(observer.error.bind(observer));
   });
