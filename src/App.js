@@ -1,25 +1,7 @@
 import React, { Component } from "react";
 import { graphql } from "react-apollo";
 import gql from "graphql-tag";
-
-class ErrorBoundary extends Component {
-  state = {
-    hasError: false,
-  };
-
-  componentDidCatch(error, info) {
-    console.log('componentDidCatch');
-    this.setState({ hasError: true });
-  }
-
-  render() {
-    if (this.state.hasError) {
-      console.log('rendering error page');
-      return <h1>Something went wrong.</h1>;
-    }
-    return this.props.children;
-  }
-}
+import { Redirect } from 'react-router-dom';
 
 class FailingComponent extends Component {
   componentWillUnmount() {
@@ -27,10 +9,12 @@ class FailingComponent extends Component {
   }
 
   render() {
+    console.log('render');
     const { data: { loading, error, people } } = this.props;
 
     if (error) {
-      throw new Error('error');
+      // Cause component to be unmounted after detecting error
+      return <Redirect to="/clean" />
     }
 
     return (
@@ -64,7 +48,7 @@ class FailingComponent extends Component {
   }
 }
 
-const FailingComponentWithApollo = graphql(
+export default graphql(
   gql`
     query ErrorTemplate {
       people {
@@ -74,14 +58,3 @@ const FailingComponentWithApollo = graphql(
     }
   `
 )(FailingComponent);
-
-export default class App extends Component {
-  render() {
-    return (
-      <ErrorBoundary>
-        <FailingComponentWithApollo/>
-      </ErrorBoundary>
-    );
-  }
-}
-

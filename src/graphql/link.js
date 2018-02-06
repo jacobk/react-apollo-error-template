@@ -5,6 +5,7 @@ import { schema } from "./schema";
 
 export const link = new ApolloLink(operation => {
   return new Observable(observer => {
+    console.log('making query');
     const { query, operationName, variables } = operation;
     delay(300)
       .then(() =>
@@ -13,8 +14,6 @@ export const link = new ApolloLink(operation => {
       .then(result => {
         console.log('triggering error');
         observer.error(new Error('error'));
-        // observer.next(result);
-        // observer.complete();
       })
       .catch(observer.error.bind(observer));
   });
